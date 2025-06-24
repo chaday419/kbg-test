@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="fr">
+
+<!DOCTYPE html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +24,7 @@
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
       width: 100%;
       max-width: 400px;
+      text-align: center;
     }
     input {
       width: 100%;
@@ -40,57 +43,94 @@
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
+      margin-top: 10px;
     }
     button:hover {
       background-color: #0056b3;
     }
     #qrcode {
       margin-top: 20px;
-      text-align: center;
+    }
+    #download-btn {
+      display: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2 style="text-align: center;">Générateur QR Étudiant</h2>
+    <h2>Générateur QR Étudiant</h2>
+    
     <input type="text" id="nom" placeholder="Nom">
     <input type="text" id="postnom" placeholder="Post-nom">
     <input type="text" id="prenom" placeholder="Prénom">
-    <input type="text" id="sexe" placeholder="sexe">
-    <input type="text" id="promotion" placeholder="promotion">
+    <input type="text" id="texte" placeholder="Texte (ex: Présence OK)">
+    <input type="text" id="promotion" placeholder="Promotion (ex: L2 Info)">
+    <input type="text" id="numero" placeholder="Numéro de téléphone">
     <input type="text" id="matricule" placeholder="Matricule">
+    
     <button onclick="genererQR()">Générer le QR Code</button>
+    
     <div id="qrcode"></div>
-  </div>  <script>
+    
+    <button id="download-btn" onclick="telechargerQR()">Télécharger le QR Code</button>
+  </div>
+
+  <script>
+    let qrCode = null;
+
     function genererQR() {
       const nom = document.getElementById('nom').value.trim();
       const postnom = document.getElementById('postnom').value.trim();
       const prenom = document.getElementById('prenom').value.trim();
-      const sexe = document.getElementById('sexe').value.trim();
+      const texte = document.getElementById('texte').value.trim();
       const promotion = document.getElementById('promotion').value.trim();
+      const numero = document.getElementById('numero').value.trim();
       const matricule = document.getElementById('matricule').value.trim();
 
-      if (!nom || !postnom || !prenom || !matricule) {
+      if (!nom || !postnom || !prenom || !texte || !promotion || !numero || !matricule) {
         alert("Veuillez remplir tous les champs !");
         return;
       }
 
       const data = {
-        nom: nom,
-        post_nom: postnom,
-        prenom: prenom, 
-        sexe: sexe,
-        promotion: promotion,
-        matricule: matricule
+        nom,
+        postnom,
+        prenom,
+        texte,
+        promotion,
+        numero,
+        matricule
       };
 
       const jsonData = JSON.stringify(data);
       document.getElementById("qrcode").innerHTML = "";
-      new QRCode(document.getElementById("qrcode"), {
+
+      qrCode = new QRCode(document.getElementById("qrcode"), {
         text: jsonData,
         width: 200,
         height: 200
       });
+
+      setTimeout(() => {
+        document.getElementById("download-btn").style.display = "block";
+      }, 500); // attend le rendu
     }
-  </script></body>
+
+    function telechargerQR() {
+      const img = document.querySelector('#qrcode img');
+      if (!img) {
+        alert("QR Code non généré !");
+        return;
+      }
+
+      const url = img.src;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'qr_etudiant.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  </script>
+</body>
 </html>
