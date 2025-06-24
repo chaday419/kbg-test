@@ -84,63 +84,75 @@
     function startScanner() {
       const previewDiv = document.getElementById("preview");
 
+      // Vérifie si déjà en cours
       if (qrScanner) {
         qrScanner.stop().then(() => {
           qrScanner.clear();
           qrScanner = null;
-          startScanner(); // relancer proprement
+          startScanner();
         });
         return;
       }
 
       qrScanner = new Html5Qrcode("preview");
 
-      qrScanner.start(
-        { facingMode: "environment" }, // caméra arrière
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 }
-        },
-        (decodedText, decodedResult) => {
-          try {
-            const info = JSON.parse(decodedText);
+      Html5Qrcode.getCameras().then(devices => {
+        if (devices && devices.length) {
+          const cameraId = devices[0].id; // Prend la première caméra
 
-            fetch("https://script.google.com/macros/s/AKfycbwRbAbbfyRlwuleWPYhukwlKXF9eRQJAbYAqSAsKRp_toQ0lXyNQeFkRILCK1XtUjpWvQ/exec", {
-              method: "POST",
-              body: JSON.stringify({
-                nom: info.nom,
-                post_nom: info.post_nom,
-                prenom: info.prenom,
-                sexe: info.sex,
-                promotion: info.promotion,
-                matricule: info.matricule
-              }),
-              headers: {
-                "Content-Type": "application/json"
+          qrScanner.start(
+            { facingMode: "environment" }, // ou cameraId
+            {
+              fps: 10,
+              qrbox: { width: 250, height: 250 }
+            },
+            (decodedText, decodedResult) => {
+              try {
+                const info = JSON.parse(decodedText);
+
+                fetch("https://script.google.com/macros/s/AKfycbwRbAbbfyRlwuleWPYhukwlKXF9eRQJAbYAqSAsKRp_toQ0lXyNQeFkRILCK1XtUjpWvQ/exec", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    nom: info.nom,
+                    post_nom: info.post_nom,
+                    prenom: info.prenom,
+                    sexe: info.sexe,
+                    promotion: info.promotion,
+                    matricule: info.matricule
+                  }),
+                  headers: {
+                    "Content-Type": "application/json"
+                  }
+                })
+                .then(response => response.text())
+                .then(data => {
+                  alert("Présence enregistrée !");
+                })
+                .catch(error => {
+                  alert("Erreur d'envoi : " + error);
+                });
+              } catch (err) {
+                alert("QR Code invalide !");
               }
-            })
-            .then(response => response.text())
-            .then(data => {
-              alert("Présence enregistrée !");
-            })
-            .catch(error => {
-              alert("Erreur lors de l'enregistrement : " + error);
-            });
 
-          } catch (err) {
-            alert("QR Code invalide !");
-          }
-
-          qrScanner.stop().then(() => {
-            qrScanner.clear();
-            qrScanner = null;
+              qrScanner.stop().then(() => {
+                qrScanner.clear();
+                qrScanner = null;
+              });
+            },
+            (scanError) => {
+              // Affiche erreur de scan si besoin
+              console.warn("Scan error: ", scanError);
+            }
+          ).catch(err => {
+            console.error("Erreur de démarrage caméra :", err);
+            alert("Impossible d'accéder à la caméra : " + err);
           });
-        },
-        (error) => {
-          // Silencieux sur les erreurs courantes
+        } else {
+          alert("Aucune caméra trouvée !");
         }
-      ).catch(err => {
-        alert("Erreur de caméra : " + err);
+      }).catch(err => {
+        alert("Erreur lors de la récupération des caméras : " + err);
       });
     }
   </script>
