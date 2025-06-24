@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de QR Code Étudiant</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #f0f4f8;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #qrcode {
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 style="text-align: center;">Générateur QR Étudiant</h2>
+    <input type="text" id="nom" placeholder="Nom">
+    <input type="text" id="postnom" placeholder="Post-nom">
+    <input type="text" id="prenom" placeholder="Prénom">
+    <input type="text" id="sexe" placeholder="sexe">
+    <input type="text" id="promotion" placeholder="promotion">
+    <input type="text" id="matricule" placeholder="Matricule">
+    <button onclick="genererQR()">Générer le QR Code</button>
+    <div id="qrcode"></div>
+  </div>  <script>
+    function genererQR() {
+      const nom = document.getElementById('nom').value.trim();
+      const postnom = document.getElementById('postnom').value.trim();
+      const prenom = document.getElementById('prenom').value.trim();
+      const sexe = document.getElementById('sexe').value.trim();
+      const promotion = document.getElementById('promotion').value.trim();
+      const matricule = document.getElementById('matricule').value.trim();
+
+      if (!nom || !postnom || !prenom || !matricule) {
+        alert("Veuillez remplir tous les champs !");
+        return;
+      }
+
+      const data = {
+        nom: nom,
+        post_nom: postnom,
+        prenom: prenom, 
+        sexe: sexe,
+        promotion: promotion,
+        matricule: matricule
+      };
+
+      const jsonData = JSON.stringify(data);
+      document.getElementById("qrcode").innerHTML = "";
+      new QRCode(document.getElementById("qrcode"), {
+        text: jsonData,
+        width: 200,
+        height: 200
+      });
+    }
+  </script></body>
+</html>
