@@ -30,6 +30,25 @@
       z-index: 0;
     }
 
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 2;
+      background-color: #e60000;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .logout-btn:hover {
+      background-color: #990000;
+    }
+
     .container {
       position: relative;
       z-index: 1;
@@ -95,11 +114,20 @@
       p {
         font-size: 0.9rem;
       }
+
+      .logout-btn {
+        font-size: 12px;
+        padding: 8px 12px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="overlay"></div>
+
+  <!-- Bouton Déconnexion -->
+  <button class="logout-btn" onclick="window.location.='admin.html'">🔒 céconnexion</button>
+
   <div class="container">
     <h1>Bienvenue à l’UPN</h1>
     <p>Veuillez scanner votre QR code étudiant pour confirmer votre présence.</p>
@@ -107,7 +135,6 @@
     <video id="preview"></video>
   </div>
 
-  <!-- QR Scanner -->
   <script src="https://unpkg.com/html5-qrcode"></script>
   <script>
     function startScanner() {
