@@ -1,142 +1,88 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!DOCTYPE html><html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>UPN - Présence Étudiante</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: url('UPN.jpg.jpg') no-repeat center center fixed;
       background-size: cover;
-      min-height: 100vh;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-    }
+    }.overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 40, 80, 0.7);
+  z-index: 0;
+}
 
-    .overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 40, 80, 0.7);
-      z-index: 0;
-    }
+.container {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  max-width: 500px;
+  width: 90%;
+}
 
-    .logout-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      z-index: 2;
-      background-color: #e60000;
-      color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 10px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
+h1 {
+  font-size: 28px;
+  color: #002b50;
+  margin-bottom: 10px;
+}
 
-    .logout-btn:hover {
-      background-color: #990000;
-    }
+p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 30px;
+}
 
-    .container {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      background-color: rgba(255, 255, 255, 0.95);
-      padding: 30px 20px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      width: 90%;
-      max-width: 500px;
-      margin: 20px;
-    }
+button {
+  background-color: #002b50;
+  color: white;
+  border: none;
+  padding: 15px 25px;
+  font-size: 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 
-    h1 {
-      font-size: 2rem;
-      color: #002b50;
-      margin-bottom: 10px;
-    }
+button:hover {
+  background-color: #0056b3;
+}
 
-    p {
-      font-size: 1rem;
-      color: #333;
-      margin-bottom: 20px;
-    }
+video {
+  display: none;
+  margin-top: 20px;
+  width: 100%;
+  border-radius: 10px;
+}
 
-    button {
-      background-color: #002b50;
-      color: white;
-      border: none;
-      padding: 15px 25px;
-      font-size: 1rem;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
+@media screen and (max-width: 500px) {
+  h1 { font-size: 24px; }
+  button { font-size: 16px; padding: 12px 20px; }
+}
 
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    video {
-      display: none;
-      margin-top: 20px;
-      width: 100%;
-      max-height: 300px;
-      border-radius: 10px;
-    }
-
-    @media screen and (max-width: 400px) {
-      .container {
-        padding: 20px 15px;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-      }
-
-      button {
-        font-size: 0.9rem;
-        padding: 12px 18px;
-      }
-
-      p {
-        font-size: 0.9rem;
-      }
-
-      .logout-btn {
-        font-size: 12px;
-        padding: 8px 12px;
-      }
-    }
   </style>
 </head>
 <body>
   <div class="overlay"></div>
-
-  <!-- Bouton Déconnexion -->
-  <button class="logout-btn" onclick="window.location.='admin.html'">🔒 céconnexion</button>
-
   <div class="container">
     <h1>Bienvenue à l’UPN</h1>
     <p>Veuillez scanner votre QR code étudiant pour confirmer votre présence.</p>
     <button onclick="startScanner()">📷 Scanner un QR Code</button>
     <video id="preview"></video>
-  </div>
-
-  <script src="https://unpkg.com/html5-qrcode"></script>
-  <script>
+  </div>  <script src="https://unpkg.com/html5-qrcode"></script>  <script>
     function startScanner() {
       const videoElem = document.getElementById("preview");
       videoElem.style.display = "block";
@@ -147,7 +93,7 @@
         { facingMode: "environment" },
         {
           fps: 10,
-          qrbox: { width: 250, height: 250 }
+          qrbox: 250
         },
         (decodedText, decodedResult) => {
           try {
@@ -167,7 +113,7 @@
             })
             .then(response => response.text())
             .then(data => {
-              alert("Présence enregistrée pour : " + info.nom + " " + info.post_nom);
+              alert("Présence enregistrée !");
             })
             .catch(error => {
               alert("Erreur lors de l'enregistrement : " + error);
@@ -184,6 +130,5 @@
         }
       );
     }
-  </script>
-</body>
+  </script></body>
 </html>
