@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.UPNPresence" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/upn_primary</item>
+        <item name="colorPrimaryDark">@color/upn_primary_dark</item>
+        <item name="colorAccent">@color/upn_accent</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
+    <style name="Theme.UPNPresence.Splash" parent="Theme.UPNPresence">
+        <item name="android:windowBackground">@color/upn_primary</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>
