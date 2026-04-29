@@ -14,10 +14,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Show structure
-        run: |
-          echo "=== ROOT ===" && ls -la
-          echo "=== APP ===" && ls -la app/ 2>/dev/null || echo "no app folder"
-          echo "=== GRADLE ===" && ls -la gradle/wrapper/ 2>/dev/null || echo "no gradle/wrapper"
+        run: find . -maxdepth 4 -type f | grep -v ".git" | head -60
 
       - name: Setup JDK 17
         uses: actions/setup-java@v4
@@ -26,20 +23,17 @@ jobs:
           distribution: 'temurin'
 
       - name: Make gradlew executable
-        run: |
-          ls -la gradlew 2>/dev/null || echo "gradlew not found"
-          chmod +x gradlew 2>/dev/null || true
-          git update-index --chmod=+x gradlew 2>/dev/null || true
+        run: chmod +x android_apk/gradlew
 
-      - name: Build APK
-        run: bash gradlew assembleDebug --no-daemon --stacktrace 2>&1
+      - name: Build APK Debug
+        run: cd android_apk && bash gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Find APK
-        run: find . -name "*.apk" 2>/dev/null || echo "No APK found"
+        run: find . -name "*.apk" -type f
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: UPN-Presence-APK
-          path: "**/*.apk"
+          path: android_apk/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
