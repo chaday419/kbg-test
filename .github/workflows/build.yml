@@ -19,25 +19,23 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Find and run gradlew
+      - name: Build APK
         run: |
           if [ -f "android_apk/gradlew" ]; then
             cd android_apk && chmod +x gradlew && bash gradlew assembleDebug --no-daemon
-          elif [ -f "gradlew" ]; then
-            chmod +x gradlew && bash gradlew assembleDebug --no-daemon
           else
-            echo "ERREUR: gradlew introuvable!" && exit 1
+            chmod +x gradlew && bash gradlew assembleDebug --no-daemon
           fi
 
-      - name: Find APK
-        run: find . -name "*.apk" -type f
+      - name: Copy APK to output folder
+        run: |
+          mkdir -p output
+          find . -name "*.apk" -type f -exec cp {} output/UPN-Presence.apk \;
+          ls -la output/
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: UPN-Presence-APK
-          path: |
-            android_apk/app/build/outputs/apk/debug/app-debug.apk
-            app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: warn
+          path: output/UPN-Presence.apk
           retention-days: 30
