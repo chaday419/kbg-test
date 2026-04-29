@@ -1,3 +1,4 @@
+
 name: Build APK Android
 
 on:
@@ -13,8 +14,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Show structure
-        run: find . -maxdepth 4 -type f | grep -v ".git" | head -60
+      - name: Show full structure
+        run: |
+          echo "=== RACINE ===" && ls -la
+          echo "=== android_apk ===" && ls -la android_apk/ 2>/dev/null || echo "PAS DE DOSSIER android_apk"
+          echo "=== app ===" && ls -la android_apk/app/ 2>/dev/null || ls -la app/ 2>/dev/null || echo "PAS DE DOSSIER app"
+          echo "=== java ===" && find . -name "*.java" 2>/dev/null
+          echo "=== gradle ===" && find . -name "build.gradle" 2>/dev/null
+          echo "=== gradlew ===" && find . -name "gradlew" 2>/dev/null
 
       - name: Setup JDK 17
         uses: actions/setup-java@v4
@@ -22,18 +29,25 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Make gradlew executable
-        run: chmod +x android_apk/gradlew
-
-      - name: Build APK Debug
-        run: cd android_apk && bash gradlew assembleDebug --no-daemon --stacktrace
+      - name: Find and run gradlew
+        run: |
+          if [ -f "android_apk/gradlew" ]; then
+            echo "Found in android_apk/"
+            cd android_apk && chmod +x gradlew && bash gradlew assembleDebug --no-daemon --info 2>&1 | tail -100
+          elif [ -f "gradlew" ]; then
+            echo "Found in root"
+            chmod +x gradlew && bash gradlew assembleDebug --no-daemon --info 2>&1 | tail -100
+          else
+            echo "ERREUR: gradlew introuvable!"
+            exit 1
+          fi
 
       - name: Find APK
-        run: find . -name "*.apk" -type f
+        run: find . -name "*.apk" -type f 2>/dev/null || echo "Aucun APK trouvé"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: UPN-Presence-APK
-          path: android_apk/app/build/outputs/apk/debug/app-debug.apk
+          path: "**/*.apk"
           retention-days: 30
